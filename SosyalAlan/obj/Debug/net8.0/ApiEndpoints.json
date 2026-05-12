@@ -1,0 +1,129 @@
+[
+  {
+    "ContainingType": "SosyalAlan.Controllers.ArkadaslikController",
+    "Method": "IstekGonder",
+    "RelativePath": "api/Arkadaslik",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "SosyalAlan.DTOs.ArkadaslikIstekDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SosyalAlan.Controllers.ArkadaslikController",
+    "Method": "ArkadasListesi",
+    "RelativePath": "api/Arkadaslik",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SosyalAlan.Controllers.ArkadaslikController",
+    "Method": "IstekYan\u0131tla",
+    "RelativePath": "api/Arkadaslik/{id}",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "SosyalAlan.DTOs.ArkadaslikYanitDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SosyalAlan.Controllers.AuthController",
+    "Method": "Giris",
+    "RelativePath": "api/Auth/giris",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "SosyalAlan.DTOs.GirisDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SosyalAlan.Controllers.AuthController",
+    "Method": "Kayit",
+    "RelativePath": "api/Auth/kayit",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "SosyalAlan.DTOs.KayitDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SosyalAlan.Controllers.KullaniciController",
+    "Method": "Listele",
+    "RelativePath": "api/Kullanici",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "ara",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SosyalAlan.Controllers.MesajController",
+    "Method": "MesajGonder",
+    "RelativePath": "api/Mesaj",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "SosyalAlan.DTOs.MesajGonderDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SosyalAlan.Controllers.MesajController",
+    "Method": "KonusmayiGor",
+    "RelativePath": "api/Mesaj/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  }
+]

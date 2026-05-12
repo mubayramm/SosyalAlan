@@ -1,0 +1,6 @@
+@SosyalAlan_HostAddress = http://localhost:5290
+
+GET {{SosyalAlan_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
