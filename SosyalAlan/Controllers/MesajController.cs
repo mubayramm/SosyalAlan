@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using SosyalAlan.Data;
 using SosyalAlan.DTOs;
-using SosyalAlan.Models;
+using SosyalAlan.Services;
 
 namespace SosyalAlan.Controllers
 {
@@ -12,75 +10,45 @@ namespace SosyalAlan.Controllers
     [Authorize]
     public class MesajController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly MesajService _mesajService;
 
-        public MesajController(AppDbContext context)
+        public MesajController(MesajService mesajService)
         {
-            _context = context;
+            _mesajService = mesajService;
         }
 
         // POST api/mesaj
         [HttpPost]
         public async Task<IActionResult> MesajGonder(MesajGonderDto dto)
         {
-            
             int gonderenId = int.Parse(User.FindFirst("id").Value);
+            string sonuc = await _mesajService.MesajGonder(gonderenId, dto);
 
-            // Alıcı var mı?
-            bool aliciVarMi = await _context.Kullanicilar.AnyAsync(k => k.Id == dto.AlanId);
-            if (!aliciVarMi)
-                return NotFound("Alıcı bulunamadı.");
+            if (sonuc == "Alıcı bulunamadı.")
+                return NotFound(sonuc);
 
-            // Kendine mesaj göndermeye çalışıyor mu?
-            if (gonderenId == dto.AlanId)
-                return BadRequest("Kendinize mesaj gönderemezsiniz.");
+            if (sonuc != "Mesaj gönderildi.")
+                return BadRequest(sonuc);
 
-            // Arkadaş mı kontrol et
-            bool arkadasMi = await _context.Arkadasliklar.AnyAsync(a =>
-                (a.GonderenId == gonderenId && a.AlanId == dto.AlanId ||
-                 a.GonderenId == dto.AlanId && a.AlanId == gonderenId)
-                && a.Durum == "Kabul");
-
-            if (!arkadasMi)
-                return BadRequest("Sadece arkadaşlarınıza mesaj gönderebilirsiniz.");
-
-            // Yeni mesaj oluştur
-            Mesaj yeniMesaj = new Mesaj();
-            yeniMesaj.GonderenId = gonderenId;
-            yeniMesaj.AlanId = dto.AlanId;
-            yeniMesaj.Icerik = dto.Icerik;
-            yeniMesaj.Tarih = DateTime.Now;
-            yeniMesaj.OkunduMu = false;
-
-            _context.Mesajlar.Add(yeniMesaj);
-            await _context.SaveChangesAsync();
-
-            return Ok("Mesaj gönderildi.");
+            return Ok(sonuc);
         }
 
         // GET api/mesaj/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> KonusmayiGor(int id)
         {
-            // Token'dan giriş yapan kullanıcının idsini al 
             int kullaniciId = int.Parse(User.FindFirst("id").Value);
+            var sonuc = await _mesajService.KonusmayiGor(kullaniciId, id);
+            return Ok(sonuc);
+        }
 
-            // İki kullanıcının birbiriyle mesajlarını getir
-            var mesajlar = await _context.Mesajlar
-                .Where(m => (m.GonderenId == kullaniciId && m.AlanId == id) ||
-                            (m.GonderenId == id && m.AlanId == kullaniciId))
-                .OrderBy(m => m.Tarih)
-                .Select(m => new
-                {
-                    m.Id,
-                    m.Icerik,
-                    m.Tarih,
-                    m.OkunduMu,
-                    GonderenAd = m.Gonderen.Ad
-                })
-                .ToListAsync();
-
-            return Ok(mesajlar);
+        // GET api/mesaj/okunmamis
+        [HttpGet("okunmamis")]
+        public async Task<IActionResult> OkunmamisMesajSayisi()
+        {
+            int kullaniciId = int.Parse(User.FindFirst("id").Value);
+            int sayi = await _mesajService.OkunmamisMesajSayisi(kullaniciId);
+            return Ok(new { okunmamisSayi = sayi });
         }
     }
 }

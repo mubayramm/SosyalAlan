@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SosyalAlan.Data;
+using SosyalAlan.Services;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,12 @@ var builder = WebApplication.CreateBuilder(args);
 // Veritabaný baðlantýsý
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Servisler
+builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<KullaniciService>();
+builder.Services.AddScoped<ArkadaslikService>();
+builder.Services.AddScoped<MesajService>();
 
 // JWT ayarlarý
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

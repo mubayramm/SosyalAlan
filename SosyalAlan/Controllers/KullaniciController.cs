@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using SosyalAlan.Data;
+using SosyalAlan.DTOs;
+using SosyalAlan.Services;
 
 namespace SosyalAlan.Controllers
 {
@@ -10,34 +10,61 @@ namespace SosyalAlan.Controllers
     [Authorize]
     public class KullaniciController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly KullaniciService _kullaniciService;
 
-        public KullaniciController(AppDbContext context)
+        public KullaniciController(KullaniciService kullaniciService)
         {
-            _context = context;
+            _kullaniciService = kullaniciService;
         }
 
-        // GET api/kullanicilariara
+        // GET api/kullanici
         [HttpGet]
         public async Task<IActionResult> Listele(string? ara)
         {
-            // tüm kullanıcıları al
-            var kullanicilar = _context.Kullanicilar.AsQueryable();
+            var sonuc = await _kullaniciService.Listele(ara);
+            return Ok(sonuc);
+        }
 
-            // Arama yaptıysak filtrele
-            if (!string.IsNullOrEmpty(ara))
-            {
-                kullanicilar = kullanicilar.Where(k => k.Ad.Contains(ara));
-            }
+        // GET api/kullanici/profil
+        [HttpGet("profil")]
+        public async Task<IActionResult> ProfilGetir()
+        {
+            int kullaniciId = int.Parse(User.FindFirst("id").Value);
+            var sonuc = await _kullaniciService.ProfilGetir(kullaniciId);
+            if (sonuc == null)
+                return NotFound("Kullanıcı bulunamadı.");
 
-            // Sadece gerekli alanları döndür assas bilgileri gönderme
-            var sonuc = await kullanicilar.Select(k => new
-            {
-                k.Id,
-                k.Ad,
-                k.Eposta,
-                k.KayitTarihi
-            }).ToListAsync();
+            return Ok(sonuc);
+        }
+
+        // PUT api/kullanici/profil
+        [HttpPut("profil")]
+        public async Task<IActionResult> ProfilGuncelle(ProfilGuncelleDto dto)
+        {
+            int kullaniciId = int.Parse(User.FindFirst("id").Value);
+            string sonuc = await _kullaniciService.ProfilGuncelle(kullaniciId, dto);
+
+            if (sonuc == null)
+                return NotFound("Kullanıcı bulunamadı.");
+
+            if (sonuc == "Bu eposta zaten kullanılıyor.")
+                return BadRequest(sonuc);
+
+            return Ok(sonuc);
+        }
+
+        // PATCH api/kullanici/sifre
+        [HttpPatch("sifre")]
+        public async Task<IActionResult> SifreDegistir(SifreDegistirDto dto)
+        {
+            int kullaniciId = int.Parse(User.FindFirst("id").Value);
+            string sonuc = await _kullaniciService.SifreDegistir(kullaniciId, dto);
+
+            if (sonuc == null)
+                return NotFound("Kullanıcı bulunamadı.");
+
+            if (sonuc == "Eski şifre hatalı.")
+                return BadRequest(sonuc);
 
             return Ok(sonuc);
         }
